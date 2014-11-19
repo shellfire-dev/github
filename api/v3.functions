@@ -26,12 +26,15 @@ github_api_v3_initialise()
 	github_api_v3_user="${githubOAuth2PersonalAccessToken}:x-oauth-basic"
 	
 	local TMP_FILE
-	core_temporaryFiles_newFileToRemoveOnExit
-	github_api_v3_requestFilePath="$TMP_FILE"
-	
-	local TMP_FILE
-	core_temporaryFiles_newFileToRemoveOnExit
-	github_api_v3_responseFilePath="$TMP_FILE"
+	if core_variable_isUnset github_api_v3_requestFilePath; then
+		core_temporaryFiles_newFileToRemoveOnExit
+		github_api_v3_requestFilePath="$TMP_FILE"
+	fi
+
+	if core_variable_isUnset github_api_v3_responseFilePath; then
+		core_temporaryFiles_newFileToRemoveOnExit
+		github_api_v3_responseFilePath="$TMP_FILE"
+	fi
 }
 
 _github_api_v3_relative()
