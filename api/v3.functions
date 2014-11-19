@@ -92,8 +92,29 @@ _github_api_v3_absolute()
 
 github_api_v3_errorMessage()
 {
-	XXXX: TODO: Handle events
-	jsonreader "$github_api_v3_responseFilePath"
+	local errorMessage=''
+	
+	_github_api_v3_errorMessage_event()
+	{
+		if [ "$jsonreader_path" != '/message' ]; then
+			return
+		fi
+		
+		local kind="$1"
+		if [ "$1" != 'value' ]; then
+			return 0
+		fi
+		if [ "$2" != 'string' ]; then
+			return 0
+		fi
+		local string="$3"
+		
+		errorMessage="$string"
+	}
+	
+	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_errorMessage_event
+	
+	core_exitError $core_commandLine_exitCode_DATAERR "GitHub error message was '$errorMessage'"
 }
 
 _github_api_v3_relative_GET()
