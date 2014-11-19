@@ -185,7 +185,7 @@ github_api_v3_releases_create()
 	local tagName="$3"
 	local commitish="$4"
 	local name="$5"
-	local description="$6"
+	local body="$6"
 	local draft="$7"
 	local prerelease="$8"
 	
