@@ -8,6 +8,8 @@
 
 core_usesIn curl
 core_usesIn urlencode
+core_usesIn jsonreader
+core_usesIn jsonwriter
 
 github_api_v3_initialise()
 {
@@ -88,16 +90,10 @@ _github_api_v3_absolute()
 	esac
 }
 
-core_dependency_requires '*' jshon
 github_api_v3_errorMessage()
 {
-	# My issues with jshon are:-
-	# - Not possible to extract multiple fields, tab-separated
-	# - Doesn't correctly handle empty (either omits, or display an empty array when nested results were asked for)
-	# https://github.com/ddopson/underscore-cli
-	# https://stedolan.github.io/jq/
-	# TickTock and others, of course
-	jshon -e message -u "$github_api_v3_responseFilePath"
+	XXXX: TODO: Handle events
+	jsonreader "$github_api_v3_responseFilePath"
 }
 
 _github_api_v3_relative_GET()
@@ -124,9 +120,6 @@ _github_api_v3_relative_PATCH()
 	
 	_github_api_v3_relative PATCH "$relativePath" 'Content-Type' 'application/json' "$@"
 }
-
-core_dependency_requires '*' jshon
-core_usesIn jsonwriter
 
 github_api_v3_releases_list()
 {
