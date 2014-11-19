@@ -127,11 +127,6 @@ github_api_v3_releases_list()
 	local repo="$2"
 	
 	_github_api_v3_relative_GET "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
-	
-	# jq is very nice, but --join-output isn't implemented in 1.4, making it less useful.
-	# jq --raw-output '.[]|.url,.id' <x
-	cat "$github_api_v3_responseFilePath"
-	exit 99
 }
 
 github_api_v3_releases_create()
