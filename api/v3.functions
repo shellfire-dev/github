@@ -196,7 +196,7 @@ github_api_v3_releases_create()
 			string body "$body" \
 			boolean draft "$draft" \
 			boolean prerelease "$prerelease" \
-	>"$github_api_v3_postInputFile"
+	>"$github_api_v3_requestFilePath"
 	
 	_github_api_v3_relative_POST "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
 	
