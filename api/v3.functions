@@ -65,7 +65,7 @@ _github_api_v3_absolute()
 	
 	local curl_uploadFile="$github_api_v3_requestFilePath"
 	
-	local curl_httpVersion curl_httpCode curl_httpDescription
+	local curl_httpVersion curl_httpDescription
 	curl_retrieve basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
 	
 	case $curl_httpCode in
@@ -163,6 +163,7 @@ github_api_v3_releases_list()
 	local owner="$1"
 	local repo="$2"
 	
+	local curl_httpCode
 	_github_api_v3_relative_GET "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
 	
 	if [ $curl_httpCode -ne 200 ]; then
@@ -198,6 +199,7 @@ github_api_v3_releases_create()
 			boolean prerelease "$prerelease" \
 	>"$github_api_v3_requestFilePath"
 	
+	local curl_httpCode
 	_github_api_v3_relative_POST "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
 	
 	if [ $curl_httpCode -ne 201 ]; then
@@ -214,6 +216,7 @@ github_api_v3_releases_delete()
 	local repo="$2"
 	local id="$3"
 	
+	local curl_httpCode
 	_github_api_v3_relative_DELETE "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases/$(urlencode_pathPiece "$id")"
 	
 	if [ $curl_httpCode -ne 204 ]; then
@@ -234,8 +237,8 @@ github_api_v3_releases_uploadAsset()
 	# Not particularly efficient.
 	cat "$filePath" >"$github_api_v3_requestFilePath"
 	
-	local url="$(urlencode_template "$uploadUrlTemplate")"
-	_github_api_v3_absolute_PUT "$url" 'Content-Type' "$contentType"
+	local curl_httpCode
+	_github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
 	
 	if [ "$label" != "$urlencode_template_variable_name" ]; then
 		:
