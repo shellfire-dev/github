@@ -106,8 +106,8 @@ github_api_v3_errorMessage()
 	
 	_github_api_v3_errorMessage_event()
 	{
-		if jsonreader_eventMatches /message value string; then
-			errorMessage="$string"
+		if jsonreader_eventMatches '/message' value string; then
+			errorMessage="$eventValue"
 		fi
 	}
 	
