@@ -7,7 +7,7 @@
 # It seems REST has now gained the "enterprise tooling" and "self describing schema stuff" we loathed about WS-DeathStar.
 
 core_usesIn curl
-core_usesIn urlencode
+core_usesIn urlencode template
 core_usesIn jsonreader
 core_usesIn jsonwriter
 
@@ -173,7 +173,7 @@ github_api_v3_releases_list()
 
 _github_api_v3_extractHeader_Location()
 {
-	if [ "$headerName" = 'Location' ]; then
+	if [ "$headerName" = 'LOCATION' ]; then
 		github_api_v3_header_Location="$headerValue"
 	fi
 }
@@ -232,16 +232,31 @@ github_api_v3_releases_uploadAsset()
 	local contentType="$3"
 	local label="$4"
 	
-	local urlencode_template_variable_name="$(core_compatibility_basename "$filePath")"
+	
+	
+	
+	
+	
+	
+	
+	XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	
+	
+	
+	
 	
 	# Not particularly efficient.
 	cat "$filePath" >"$github_api_v3_requestFilePath"
+	xxxx
 	
 	local curl_httpCode
+	local urlencode_template_variable_name="$(core_compatibility_basename "$filePath")"
 	_github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
 	
 	if [ "$label" != "$urlencode_template_variable_name" ]; then
 		:
 	fi
 	# Extract the asset id, then create a patch
+	
+	xxxx
 }
