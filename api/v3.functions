@@ -157,7 +157,10 @@ _github_api_v3_relative_PUT()
 
 _github_api_v3_absolute_PUT()
 {
-	_github_api_v3_absolute PUT "$1" "$@"
+	local absoluteUrl="$1"
+	shift 1
+	
+	_github_api_v3_absolute PUT "$absoluteUrl" "$@"
 }
 
 _github_api_v3_absolute_PATCH()
