@@ -74,29 +74,29 @@ _github_api_v3_absolute()
 		
 		# Bad Request (we sent an invalid JSON)
 		400)
-			core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+			github_api_v3_errorMessageExit
 		;;
 		
 		# Unprocessable Entity (we sent an invalid field in the body)
 		422)
-			core_exitError $core_commandLine_exitCode_USAGE "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+			github_api_v3_errorMessageExit
 		;;
 		
 		# Unauthorized (not always)
 		401)
-			core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+			github_api_v3_errorMessageExit
 		;;
 		
 		# Unauthorized or Rate-Limited
 		403)
-			core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+			github_api_v3_errorMessageExit
 		;;
 		
 	esac
 }
 
 core_dependency_requires '*' cat
-github_api_v3_errorMessage()
+github_api_v3_errorMessageExit()
 {
 	if [ "$(core_init_verbosity)" -gt 0 ]; then
 		cat "$github_api_v3_responseFilePath" 1>&2
@@ -174,7 +174,7 @@ github_api_v3_releases_list()
 	_github_api_v3_relative_GET "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
 	
 	if [ $curl_httpCode -ne 200 ]; then
-		github_api_v3_errorMessage
+		github_api_v3_errorMessageExit
 	fi
 }
 
@@ -210,7 +210,7 @@ github_api_v3_releases_create()
 	_github_api_v3_relative_POST "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
 	
 	if [ $curl_httpCode -ne 201 ]; then
-		github_api_v3_errorMessage
+		github_api_v3_errorMessageExit
 	fi
 	
 	# Extract the Location header
@@ -227,7 +227,7 @@ github_api_v3_releases_delete()
 	_github_api_v3_relative_DELETE "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases/$(urlencode_pathPiece "$id")"
 	
 	if [ $curl_httpCode -ne 204 ]; then
-		github_api_v3_errorMessage
+		github_api_v3_errorMessageExit
 	fi
 }
 
@@ -246,7 +246,7 @@ github_api_v3_releases_uploadAsset()
 	_github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
 	
 	if [ $curl_httpCode -ne 201 ]; then
-		core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+		github_api_v3_errorMessageExit
 	fi
 	
 	local url=''
@@ -268,7 +268,7 @@ github_api_v3_releases_uploadAsset()
 		_github_api_v3_absolute_PATCH "$url"
 		
 		if [ $curl_httpCode -ne 201 ]; then
-			core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+			github_api_v3_errorMessageExit
 		fi
 	fi
 }
