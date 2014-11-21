@@ -95,26 +95,20 @@ _github_api_v3_absolute()
 	esac
 }
 
+core_dependency_requires '*' cat
 github_api_v3_errorMessage()
 {
+	if [ "$(core_init_verbosity)" -gt 0 ]; then
+		cat "$github_api_v3_responseFilePath" 1>&2
+	fi
+	
 	local errorMessage=''
 	
 	_github_api_v3_errorMessage_event()
 	{
-		if [ "$jsonreader_path" != '/message' ]; then
-			return
+		if jsonreader_eventMatches /message value string; then
+			errorMessage="$string"
 		fi
-		
-		local kind="$1"
-		if [ "$1" != 'value' ]; then
-			return 0
-		fi
-		if [ "$2" != 'string' ]; then
-			return 0
-		fi
-		local string="$3"
-		
-		errorMessage="$string"
 	}
 	
 	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_errorMessage_event
