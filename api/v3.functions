@@ -63,7 +63,9 @@ _github_api_v3_absolute()
 	# As an alternative to setting user, we can set a header: 'Authorization' "token ${github_api_v3_oauth2Token}"
 	set -- "Accept" 'application/vnd.github.v3+json' "$@"
 	
-	local curl_uploadFile="$github_api_v3_requestFilePath"
+	if core_variable_isUnset curl_uploadFile; then
+		local curl_uploadFile="$github_api_v3_requestFilePath"
+	fi
 	
 	local curl_httpVersion curl_httpDescription
 	curl_retrieve basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
@@ -158,6 +160,11 @@ _github_api_v3_absolute_PUT()
 	_github_api_v3_absolute PUT "$1" "$@"
 }
 
+_github_api_v3_absolute_PATCH()
+{
+	_github_api_v3_absolute PATCH "$1" 'Content-Type' 'application/json' "$@"
+}
+
 github_api_v3_releases_list()
 {
 	local owner="$1"
@@ -232,31 +239,36 @@ github_api_v3_releases_uploadAsset()
 	local contentType="$3"
 	local label="$4"
 	
-	
-	
-	
-	
-	
-	
-	
-	XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	
-	
-	
-	
-	
-	# Not particularly efficient.
-	cat "$filePath" >"$github_api_v3_requestFilePath"
-	xxxx
+	local curl_uploadFile="$filePath"
 	
 	local curl_httpCode
 	local urlencode_template_variable_name="$(core_compatibility_basename "$filePath")"
 	_github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
 	
-	if [ "$label" != "$urlencode_template_variable_name" ]; then
-		:
+	if [ $curl_httpCode -ne 201 ]; then
+		core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
 	fi
-	# Extract the asset id, then create a patch
 	
-	xxxx
+	local url=''
+	_github_api_v3_releases_uploadAsset_event()
+	{
+		if jsonreader_eventMatches '/url' value string; then
+			id="$eventValue"
+		fi
+	}
+	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_releases_uploadAsset_event
+	
+	if [ "$label" != "$urlencode_template_variable_name" ]; then
+	
+		jsonwriter_object \
+				string name "$urlencode_template_variable_name" \
+				string label "$label" \
+		>"$github_api_v3_requestFilePath"
+		
+		_github_api_v3_absolute_PATCH "$url"
+		
+		if [ $curl_httpCode -ne 201 ]; then
+			core_exitError $core_commandLine_exitCode_DATAERR "HTTP Error '$curl_httpCode': '$(github_api_v3_errorMessage)'"
+		fi
+	fi
 }
