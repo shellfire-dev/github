@@ -162,7 +162,10 @@ _github_api_v3_absolute_PUT()
 
 _github_api_v3_absolute_PATCH()
 {
-	_github_api_v3_absolute PATCH "$1" 'Content-Type' 'application/json' "$@"
+	local absoluteUrl="$1"
+	shift 1
+	
+	_github_api_v3_absolute PATCH "$absoluteUrl" 'Content-Type' 'application/json' "$@"
 }
 
 github_api_v3_releases_list()
