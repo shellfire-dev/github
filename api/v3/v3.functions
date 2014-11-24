@@ -157,7 +157,7 @@ _github_api_v3_absolute()
 	core_message NOTICE "Making GitHub API Call: $verb $url"
 	
 	local curl_httpVersion curl_httpReasonPhrase
-	curl_retrieve basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
+	curl_http basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
 	unset curl_uploadFile
 	
 	case $curl_httpStatusCode in
