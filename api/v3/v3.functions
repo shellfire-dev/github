@@ -61,6 +61,10 @@ github_api_v3_errorMessageExit()
 	
 	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_errorMessage_event
 	
+	if [ "$(core_init_verbosity)" -gt 1 ]; then
+		cat "$github_api_v3_responseFilePath" 1>&2
+	fi
+	
 	core_exitError $core_commandLine_exitCode_DATAERR "GitHub error ($curl_httpStatusCode) was '$errorMessage'"
 }
 

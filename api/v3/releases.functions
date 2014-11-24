@@ -87,7 +87,7 @@ github_api_v3_releases_uploadAsset()
 			fi
 		}
 		jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_releases_uploadAsset_event
-	
+		
 		jsonwriter_object \
 				string name "$urlencode_template_variable_name" \
 				string label "$label" \
