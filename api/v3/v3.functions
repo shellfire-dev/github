@@ -156,6 +156,7 @@ _github_api_v3_absolute()
 	
 	local curl_httpVersion curl_httpReasonPhrase
 	curl_retrieve basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
+	unset curl_uploadFile
 	
 	case $curl_httpStatusCode in
 		

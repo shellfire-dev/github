@@ -67,9 +67,11 @@ github_api_v3_releases_uploadAsset()
 	local contentType="$3"
 	local label="$4"
 	
+	local curl_uploadFile="$filePath" 
 	local curl_httpStatusCode
 	local urlencode_template_variable_name="$(core_compatibility_basename "$filePath")"
-	curl_uploadFile="$filePath" _github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
+	_github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
+	unset curl_uploadFile
 	
 	if [ $curl_httpStatusCode -ne 201 ]; then
 		github_api_v3_errorMessageExit
