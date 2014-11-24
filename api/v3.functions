@@ -180,8 +180,8 @@ github_api_v3_releases_list()
 
 _github_api_v3_extractHeader_Location()
 {
-	if [ "$headerName" = 'LOCATION' ]; then
-		github_api_v3_header_Location="$headerValue"
+	if [ "$fieldName" = 'LOCATION' ]; then
+		github_api_v3_header_Location="$fieldValue"
 	fi
 }
 
