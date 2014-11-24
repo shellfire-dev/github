@@ -37,6 +37,40 @@ github_api_v3_initialise()
 	fi
 }
 
+core_dependency_requires '*' date
+github_api_v3_timestampToEpochSeconds()
+{
+	date -d "$1" '+%s'
+}
+
+core_dependency_requires '*' cat
+github_api_v3_errorMessageExit()
+{
+	if [ "$(core_init_verbosity)" -gt 0 ]; then
+		cat "$github_api_v3_responseFilePath" 1>&2
+	fi
+	
+	local errorMessage=''
+	
+	_github_api_v3_errorMessage_event()
+	{
+		if jsonreader_eventMatches '/message' value string; then
+			errorMessage="$eventValue"
+		fi
+	}
+	
+	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_errorMessage_event
+	
+	core_exitError $core_commandLine_exitCode_DATAERR "GitHub error ($curl_httpStatusCode) was '$errorMessage'"
+}
+
+_github_api_v3_extractHeader_Location()
+{
+	if [ "$fieldName" = 'LOCATION' ]; then
+		github_api_v3_header_Location="$fieldValue"
+	fi
+}
+
 _github_api_v3_relative()
 {
 	local verb="$1"
@@ -95,27 +129,6 @@ _github_api_v3_absolute()
 	esac
 }
 
-core_dependency_requires '*' cat
-github_api_v3_errorMessageExit()
-{
-	if [ "$(core_init_verbosity)" -gt 0 ]; then
-		cat "$github_api_v3_responseFilePath" 1>&2
-	fi
-	
-	local errorMessage=''
-	
-	_github_api_v3_errorMessage_event()
-	{
-		if jsonreader_eventMatches '/message' value string; then
-			errorMessage="$eventValue"
-		fi
-	}
-	
-	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_errorMessage_event
-	
-	core_exitError $core_commandLine_exitCode_DATAERR "GitHub error ($curl_httpStatusCode) was '$errorMessage'"
-}
-
 _github_api_v3_relative_GET()
 {
 	local relativePath="$1"
@@ -163,112 +176,4 @@ _github_api_v3_absolute_PATCH()
 	shift 1
 	
 	_github_api_v3_absolute PATCH "$absoluteUrl" 'Content-Type' 'application/json' "$@"
-}
-
-github_api_v3_releases_list()
-{
-	local owner="$1"
-	local repo="$2"
-	
-	local curl_httpStatusCode
-	_github_api_v3_relative_GET "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
-	
-	if [ $curl_httpStatusCode -ne 200 ]; then
-		github_api_v3_errorMessageExit
-	fi
-}
-
-_github_api_v3_extractHeader_Location()
-{
-	if [ "$fieldName" = 'LOCATION' ]; then
-		github_api_v3_header_Location="$fieldValue"
-	fi
-}
-
-github_api_v3_releases_create()
-{
-	local owner="$1"
-	local repo="$2"
-	
-	local tagName="$3"
-	local commitish="$4"
-	local name="$5"
-	local body="$6"
-	local draft="$7"
-	local prerelease="$8"
-	
-	jsonwriter_object \
-			string tag_name "$tagName" \
-			string target_commitish "$commitish" \
-			string name "$name" \
-			string body "$body" \
-			boolean draft "$draft" \
-			boolean prerelease "$prerelease" \
-	>"$github_api_v3_requestFilePath"
-	
-	local curl_httpStatusCode
-	_github_api_v3_relative_POST "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases"
-	
-	if [ $curl_httpStatusCode -ne 201 ]; then
-		github_api_v3_errorMessageExit
-	fi
-	
-	# Extract the Location header
-	curl_iterateHeaders _github_api_v3_extractHeader_Location
-}
-
-github_api_v3_releases_delete()
-{
-	local owner="$1"
-	local repo="$2"
-	local id="$3"
-	
-	local curl_httpStatusCode
-	_github_api_v3_relative_DELETE "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases/$(urlencode_pathPiece "$id")"
-	
-	if [ $curl_httpStatusCode -ne 204 ]; then
-		github_api_v3_errorMessageExit
-	fi
-}
-
-core_dependency_requires '*' cat
-github_api_v3_releases_uploadAsset()
-{
-	local uploadUrlTemplate="$1"
-	local filePath="$2"
-	local contentType="$3"
-	local label="$4"
-	
-	local curl_uploadFile="$filePath"
-	
-	local curl_httpStatusCode
-	local urlencode_template_variable_name="$(core_compatibility_basename "$filePath")"
-	_github_api_v3_absolute_PUT "$(urlencode_template "$uploadUrlTemplate")" 'Content-Type' "$contentType"
-	
-	if [ $curl_httpStatusCode -ne 201 ]; then
-		github_api_v3_errorMessageExit
-	fi
-	
-	local url=''
-	_github_api_v3_releases_uploadAsset_event()
-	{
-		if jsonreader_eventMatches '/url' value string; then
-			id="$eventValue"
-		fi
-	}
-	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_releases_uploadAsset_event
-	
-	if [ "$label" != "$urlencode_template_variable_name" ]; then
-	
-		jsonwriter_object \
-				string name "$urlencode_template_variable_name" \
-				string label "$label" \
-		>"$github_api_v3_requestFilePath"
-		
-		_github_api_v3_absolute_PATCH "$url"
-		
-		if [ $curl_httpStatusCode -ne 201 ]; then
-			github_api_v3_errorMessageExit
-		fi
-	fi
 }
