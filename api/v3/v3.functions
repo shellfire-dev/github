@@ -153,6 +153,8 @@ _github_api_v3_absolute()
 	if core_variable_isUnset curl_uploadFile; then
 		local curl_uploadFile="$github_api_v3_requestFilePath"
 	fi
+
+	core_message NOTICE "Making GitHub API Call: $verb $url"
 	
 	local curl_httpVersion curl_httpReasonPhrase
 	curl_retrieve basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
