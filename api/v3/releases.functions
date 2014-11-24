@@ -82,7 +82,7 @@ github_api_v3_releases_uploadAsset()
 		local url=''
 		_github_api_v3_releases_uploadAsset_event()
 		{
-			if jsonreader_eventMatches '/url' value string; then
+			if jsonreader_eventMatches '/url' string; then
 				url="$eventValue"
 			fi
 		}

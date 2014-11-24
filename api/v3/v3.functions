@@ -46,26 +46,74 @@ github_api_v3_timestampToEpochSeconds()
 core_dependency_requires '*' cat
 github_api_v3_errorMessageExit()
 {
-	if [ "$(core_init_verbosity)" -gt 0 ]; then
-		cat "$github_api_v3_responseFilePath" 1>&2
-	fi
-	
 	local errorMessage=''
+	local requestId=''
 	
+	local resource=''
+	local code=''
+	local field=''
+	
+	local errors
+	local errors_initialised
+	core_variable_array_initialise errors
+	
+	# eg {"message":"Validation Failed","request_id":"d4cb5605-73cd-11e4-85aa-d38119fad9f5","documentation_url":"https://developer.github.com/v3","errors":[{"resource":"ReleaseAsset","code":"already_exists","field":"name"}]}
 	_github_api_v3_errorMessage_event()
 	{
-		if jsonreader_eventMatches '/message' value string; then
+		if jsonreader_eventMatches '/message' string; then
 			errorMessage="$eventValue"
+			return 0
+		fi
+		
+		if jsonreader_eventMatches '/request_id' string; then
+			requestId="$eventValue"
+			return 0
+		fi
+		
+		if jsonreader_eventMatches "/errors:${jsonreader_path_index}/" start; then
+			resource=''
+			code=''
+			field=''
+		fi
+		
+		if jsonreader_eventMatches "/errors:${jsonreader_path_index}/resource" string; then
+			resource="$eventValue"
+		fi
+		
+		if jsonreader_eventMatches "/errors:${jsonreader_path_index}/code" string; then
+			code="$code"
+		fi
+		
+		if jsonreader_eventMatches "/errors:${jsonreader_path_index}/field" string; then
+			field="$field"
+		fi
+		
+		if jsonreader_eventMatches "/errors:${jsonreader_path_index}/" end; then
+			core_variable_array_append errors "There is the error (number $arrayIndex) '$code' in resource '$resource's field '$field'."
 		fi
 	}
 	
 	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_errorMessage_event
 	
-	if [ "$(core_init_verbosity)" -gt 1 ]; then
+	if [ "$(core_init_verbosity)" -gt 2 ]; then
 		cat "$github_api_v3_responseFilePath" 1>&2
 	fi
 	
-	core_exitError $core_commandLine_exitCode_DATAERR "GitHub error ($curl_httpStatusCode) was '$errorMessage'"
+	case $(core_variable_array_length errors) in
+		
+		0)
+			core_exitError $core_commandLine_exitCode_DATAERR "GitHub error for request '$requestId' ($curl_httpStatusCode) was '$errorMessage'."
+		;;
+		
+		1)
+			core_exitError $core_commandLine_exitCode_DATAERR "GitHub error for request '$requestId' ($curl_httpStatusCode) was '$errorMessage': $(core_variable_array_string errors "")"
+		;;
+		
+		*)
+			core_exitError $core_commandLine_exitCode_DATAERR "GitHub errors for request '$requestId' ($curl_httpStatusCode) was '$errorMessage' (Details: $(core_variable_array_string errors " "))"
+		;;
+		
+	esac
 }
 
 _github_api_v3_extractHeader_Location()
