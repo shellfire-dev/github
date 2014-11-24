@@ -75,6 +75,39 @@ _github_api_v3_extractHeader_Location()
 	fi
 }
 
+_github_api_v3_relative_GET()
+{
+	local relativePath="$1"
+	shift 1
+	
+	printf '' >"$github_api_v3_requestFilePath"
+	_github_api_v3_relative GET "$relativePath" "$@"
+}
+
+_github_api_v3_relative_POST()
+{
+	local relativePath="$1"
+	shift 1
+	
+	_github_api_v3_relative POST "$relativePath" 'Content-Type' 'application/json' "$@"
+}
+
+_github_api_v3_relative_PATCH()
+{
+	local relativePath="$1"
+	shift 1
+	
+	_github_api_v3_relative PATCH "$relativePath" 'Content-Type' 'application/json' "$@"
+}
+
+_github_api_v3_relative_PUT()
+{
+	local relativePath="$1"
+	shift 1
+	
+	_github_api_v3_relative PUT "$relativePath" "$@"
+}
+
 _github_api_v3_relative()
 {
 	local verb="$1"
@@ -86,6 +119,22 @@ _github_api_v3_relative()
 	fi
 	
 	_github_api_v3_absolute "$verb" "${github_api_v3_endpoint}${relativePath}" "$@"
+}
+
+_github_api_v3_absolute_PATCH()
+{
+	local absoluteUrl="$1"
+	shift 1
+	
+	_github_api_v3_absolute PATCH "$absoluteUrl" 'Content-Type' 'application/json' "$@"
+}
+
+_github_api_v3_absolute_PUT()
+{
+	local absoluteUrl="$1"
+	shift 1
+	
+	_github_api_v3_absolute PUT "$absoluteUrl" "$@"
 }
 
 _github_api_v3_absolute()
@@ -131,53 +180,4 @@ _github_api_v3_absolute()
 		;;
 		
 	esac
-}
-
-_github_api_v3_relative_GET()
-{
-	local relativePath="$1"
-	shift 1
-	
-	printf '' >"$github_api_v3_requestFilePath"
-	_github_api_v3_relative GET "$relativePath" "$@"
-}
-
-_github_api_v3_relative_POST()
-{
-	local relativePath="$1"
-	shift 1
-	
-	_github_api_v3_relative POST "$relativePath" 'Content-Type' 'application/json' "$@"
-}
-
-_github_api_v3_relative_PATCH()
-{
-	local relativePath="$1"
-	shift 1
-	
-	_github_api_v3_relative PATCH "$relativePath" 'Content-Type' 'application/json' "$@"
-}
-
-_github_api_v3_relative_PUT()
-{
-	local relativePath="$1"
-	shift 1
-	
-	_github_api_v3_relative PUT "$relativePath" "$@"
-}
-
-_github_api_v3_absolute_PUT()
-{
-	local absoluteUrl="$1"
-	shift 1
-	
-	_github_api_v3_absolute PUT "$absoluteUrl" "$@"
-}
-
-_github_api_v3_absolute_PATCH()
-{
-	local absoluteUrl="$1"
-	shift 1
-	
-	_github_api_v3_absolute PATCH "$absoluteUrl" 'Content-Type' 'application/json' "$@"
 }
