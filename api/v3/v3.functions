@@ -44,7 +44,7 @@ github_api_v3_timestampToEpochSeconds()
 }
 
 core_dependency_requires '*' cat
-github_api_v3_errorMessageExit()
+_github_api_v3_errorMessageExit()
 {
 	local errorMessage=''
 	local requestId=''
@@ -212,22 +212,22 @@ _github_api_v3_absolute()
 		
 		# Bad Request (we sent an invalid JSON)
 		400)
-			github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit
 		;;
 		
 		# Unprocessable Entity (we sent an invalid field in the body)
 		422)
-			github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit
 		;;
 		
 		# Unauthorized (not always)
 		401)
-			github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit
 		;;
 		
 		# Unauthorized or Rate-Limited
 		403)
-			github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit
 		;;
 		
 	esac
