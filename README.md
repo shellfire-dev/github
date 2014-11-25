@@ -45,7 +45,7 @@ You may need to change the url `https://github.com/shellfire-dev/github.git` abo
 
 You will also need to add paths - include the module [paths.d].
 
-You will also need to import the [curl], [urlencode], [jsonreader], [jsonwriter] and [unicode] modules.
+You will also need to import the [curl], [urlencode], [jsonreader], [jsonwriter], [unicode] and [version] modules.
 
 
 ## Namespace `github_api_v3`
@@ -173,3 +173,4 @@ Uploads a release asset and then changes its `label` using a `PATCH` only if the
 [jsonreader]: https://github.com/shellfire-dev/jsonwriter "jsonreader shellfire module homepage"
 [urlencode]: https://github.com/shellfire-dev/jsonwriter "urlencode shellfire module homepage"
 [unicode]: https://github.com/shellfire-dev/unicode "unicode shellfire module homepage"
+[version]: https://github.com/shellfire-dev/version "version shellfire module homepage"
