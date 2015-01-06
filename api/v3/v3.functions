@@ -1,3 +1,7 @@
+# This file is part of shellfire github. It is subject to the licence terms in the COPYRIGHT file found in the top-level directory of this distribution and at https://raw.githubusercontent.com/shellfire-dev/github/master/COPYRIGHT. No part of shellfire github, including this file, may be copied, modified, propagated, or distributed except according to the terms contained in the COPYRIGHT file.
+# Copyright © 2014-2015 The developers of shellfire github. See the COPYRIGHT file in the top-level directory of this distribution and at https://raw.githubusercontent.com/shellfire-dev/github/master/COPYRIGHT.
+
+
 # GitHub uses <Link>, pagination, Hypermedia, HATEOAS and URI templates as they're cool and fully RESTful
 # This just increases the pain of using their API from a command line. Roy Fielding was very clever in defining REST, but not everything REST is pragmatic.
 # Pagination is a horrid idea. What kind of server or client can't cope with a few 100 lines? It pushes state management all over the place. And it's usually broken - the ranges change between requests, so items move pages, and so disappear, or appear twice. It takes all of the worst ideas from database result set cursors, and pushes them into the web of 2014.
