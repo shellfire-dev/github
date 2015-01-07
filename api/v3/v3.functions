@@ -206,7 +206,7 @@ _github_api_v3_absolute()
 		local curl_uploadFile="$github_api_v3_requestFilePath"
 	fi
 
-	core_message NOTICE "Making GitHub API Call: $verb $url"
+	core_message INFO "Making GitHub API Call: $verb $url"
 	
 	local curl_httpVersion curl_httpReasonPhrase
 	curl_http basic "$github_api_v3_user" "$verb" "$url" "$github_api_v3_responseFilePath" "$@"
