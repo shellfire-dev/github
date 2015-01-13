@@ -66,33 +66,35 @@ github_api_v3_releases_create()
 }
 
 # Could, alternatively, be passed the value of the last Location header instead of owner, repo and releaseId
+# There's an apparent bug that if tagName is omitted (it is optional) it gets reset to a default value by GitHub
 github_api_v3_releases_edit()
 {
 	local owner="$1"
 	local repo="$2"
-	local releaseId="$3"
+	local id="$3"
+	
+	local tagName="$4"
+	local commitish="$5"
+	local name="$6"
+	local body="$7"
+	local draft="$8"
+	local prerelease="$9"
+	
+	jsonwriter_object \
+			string tag_name "$tagName" \
+			string target_commitish "$commitish" \
+			string name "$name" \
+			string body "$body" \
+			boolean draft "$draft" \
+			boolean prerelease "$prerelease" \
+	>"$github_api_v3_requestFilePath"
 	
 	local curl_httpStatusCode
-	_github_api_v3_relative_PATCH "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases/$(urlencode_pathPiece "$releaseId")"
+	_github_api_v3_relative_PATCH "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases/$(urlencode_pathPiece "$id")"
 	
 	if [ $curl_httpStatusCode -ne 200 ]; then
 		_github_api_v3_errorMessageExit
 	fi
-}
-
-github_api_v3_releases_editBody()
-{
-	local owner="$1"
-	local repo="$2"
-	local releaseId="$3"
-	
-	local body="$4"
-	
-	jsonwriter_object \
-			string body "$body" \
-	>"$github_api_v3_requestFilePath"
-	
-	github_api_v3_releases_edit "$owner" "$repo" "$releaseId"
 }
 
 github_api_v3_releases_delete()

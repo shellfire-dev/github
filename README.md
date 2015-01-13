@@ -150,20 +150,14 @@ Sets the variable `github_api_v3_releases_uploadUrlTemplate` to the upload url t
 |`owner`|Repository owner|_No_|
 |`repo`|Repository|_No_|
 |`id`|Release id|_No_|
-
-Edits a release `id`, by using a JSON file at `github_api_v3_requestFilePath`. Intended to be used as the internal implementation of other methods such as `github_api_v3_releases_editBody`.
-
-***
-#### `github_api_v3_releases_editBody`
-
-|Parameter|Value|Optional|
-|---------|-----|--------|
-|`owner`|Repository owner|_No_|
-|`repo`|Repository|_No_|
-|`id`|Release id|_No_|
+|`tagName`|tag name|_No_|
+|`commitish`|commitish|_No_|
+|`name`|Name of this release|_No_|
 |`body`|A non empty string of markdown|_No_|
+|`draft`|`true` or `false`|_No_|
+|`prerelease`|`true` or `false`|_No_|
 
-Edits a release `id` and changes the `body`.
+Edits a release `id`. Other fields as for `github_api_v3_releases_create`.
 
 ***
 #### `github_api_v3_releases_delete`
