@@ -55,7 +55,7 @@ github_api_v3_releases_create()
 	github_api_v3_releases_uploadUrlTemplate=''
 	_github_api_v3_releases_create_event()
 	{
-		if jsonreader_eventMatches '/id' string; then
+		if jsonreader_eventMatches '/id'; then
 			github_api_v3_releases_id="$eventValue"
 		fi
 		if jsonreader_eventMatches '/upload_url' string; then
