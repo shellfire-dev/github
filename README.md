@@ -139,7 +139,31 @@ Returns a JSON document listing releases in `github_api_v3_responseFilePath`. Us
 Creates a release.
 
 Sets the variable `github_api_v3_header_Location` to the location URL of the created release.
+Sets the variable `github_api_v3_releases_id` to the release's id.
 Sets the variable `github_api_v3_releases_uploadUrlTemplate` to the upload url template for assets.
+
+***
+#### `github_api_v3_releases_edit`
+
+|Parameter|Value|Optional|
+|---------|-----|--------|
+|`owner`|Repository owner|_No_|
+|`repo`|Repository|_No_|
+|`id`|Release id|_No_|
+
+Edits a release `id`, by using a JSON file at `github_api_v3_requestFilePath`. Intended to be used as the internal implementation of other methods such as `github_api_v3_releases_editBody`.
+
+***
+#### `github_api_v3_releases_editBody`
+
+|Parameter|Value|Optional|
+|---------|-----|--------|
+|`owner`|Repository owner|_No_|
+|`repo`|Repository|_No_|
+|`id`|Release id|_No_|
+|`body`|A non empty string of markdown|_No_|
+
+Edits a release `id` and changes the `body`.
 
 ***
 #### `github_api_v3_releases_delete`

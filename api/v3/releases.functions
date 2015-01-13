@@ -51,14 +51,48 @@ github_api_v3_releases_create()
 	# Extract the Location header
 	curl_iterateHeaders _github_api_v3_extractHeader_Location
 	
+	github_api_v3_releases_id=''
 	github_api_v3_releases_uploadUrlTemplate=''
 	_github_api_v3_releases_create_event()
 	{
+		if jsonreader_eventMatches '/id' string; then
+			github_api_v3_releases_id="$eventValue"
+		fi
 		if jsonreader_eventMatches '/upload_url' string; then
 			github_api_v3_releases_uploadUrlTemplate="$eventValue"
 		fi
 	}
 	jsonreader_parse "$github_api_v3_responseFilePath" _github_api_v3_releases_create_event
+}
+
+# Could, alternatively, be passed the value of the last Location header instead of owner, repo and releaseId
+github_api_v3_releases_edit()
+{
+	local owner="$1"
+	local repo="$2"
+	local releaseId="$3"
+	
+	local curl_httpStatusCode
+	_github_api_v3_relative_PATCH "/repos/$(urlencode_pathPiece "$owner")/$(urlencode_pathPiece "$repo")/releases/$(urlencode_pathPiece "$releaseId")"
+	
+	if [ $curl_httpStatusCode -ne 200 ]; then
+		_github_api_v3_errorMessageExit
+	fi
+}
+
+github_api_v3_releases_editBody()
+{
+	local owner="$1"
+	local repo="$2"
+	local releaseId="$3"
+	
+	local body="$4"
+	
+	jsonwriter_object \
+			string body "$body" \
+	>"$github_api_v3_requestFilePath"
+	
+	github_api_v3_releases_edit "$owner" "$repo" "$releaseId"
 }
 
 github_api_v3_releases_delete()
