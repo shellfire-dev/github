@@ -2,6 +2,10 @@
 
 This module provides a simple framework for using [GitHub v3 REST API](https://developer.github.com/v3/) with a [shellfire] application. It currently supports a subset of features for managing releases. We welcome contributions to increase the coverage.
 
+## Compatibility
+
+* Tag [`release_2015.0117.1750-1`](https://github.com/shellfire-dev/version/releases/tag/release_2015.0117.1750-1) is compatible with [shellfire] release [`release_2015.0117.1750-1`](https://github.com/shellfire-dev/shellfire/releases/tag/release_2015.0117.1750-1).
+
 ## Overview
 
 To use the API, you first need to initialise it. We use OAuth2 Personal Access Tokens, which you can create yourself.
