@@ -15,6 +15,7 @@ core_usesIn urlencode template
 core_usesIn jsonreader
 core_usesIn jsonwriter
 
+core_dependency_requires '*' cat
 github_api_v3_initialise()
 {
 	local tokenFilePath="$1"
@@ -25,8 +26,9 @@ github_api_v3_initialise()
 	else
 		github_api_v3_endpoint='https://api.github.com'
 	fi
-	
-	local githubOAuth2PersonalAccessToken="$(<"$tokenFilePath")"
+
+	# "$(<FILE)" doesn't work in all situations
+	local githubOAuth2PersonalAccessToken="$(cat "$tokenFilePath")"
 	github_api_v3_user="${githubOAuth2PersonalAccessToken}:x-oauth-basic"
 	
 	local TMP_FILE
