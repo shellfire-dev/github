@@ -50,8 +50,11 @@ github_api_v3_timestampToEpochSeconds()
 core_dependency_requires '*' cat
 _github_api_v3_errorMessageExit()
 {
-	local errorMessage=''
-	local requestId=''
+	local verb="$1"
+	local url="$2"
+	
+	local errorMessage='(unknown)'
+	local requestId='(unknown)'
 	
 	local resource=''
 	local code=''
@@ -106,15 +109,15 @@ _github_api_v3_errorMessageExit()
 	case $(core_variable_array_length errors) in
 		
 		0)
-			core_exitError $core_commandLine_exitCode_DATAERR "GitHub error for request '$requestId' ($curl_httpStatusCode) was '$errorMessage'."
+			core_exitError $core_commandLine_exitCode_DATAERR "GitHub error for verb '$verb' to URL '$url' for request '$requestId' ($curl_httpStatusCode) was '$errorMessage'."
 		;;
 		
 		1)
-			core_exitError $core_commandLine_exitCode_DATAERR "GitHub error for request '$requestId' ($curl_httpStatusCode) was '$errorMessage': $(core_variable_array_string errors "")"
+			core_exitError $core_commandLine_exitCode_DATAERR "GitHub error for verb '$verb' to URL '$url' for request '$requestId' ($curl_httpStatusCode) was '$errorMessage': $(core_variable_array_string errors "")"
 		;;
 		
 		*)
-			core_exitError $core_commandLine_exitCode_DATAERR "GitHub errors for request '$requestId' ($curl_httpStatusCode) was '$errorMessage' (Details: $(core_variable_array_string errors " "))"
+			core_exitError $core_commandLine_exitCode_DATAERR "GitHub errors for verb '$verb' to URL '$url' for request '$requestId' ($curl_httpStatusCode) was '$errorMessage' (Details: $(core_variable_array_string errors " "))"
 		;;
 		
 	esac
@@ -216,22 +219,22 @@ _github_api_v3_absolute()
 		
 		# Bad Request (we sent an invalid JSON)
 		400)
-			_github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit "$verb" "$url"
 		;;
 		
 		# Unprocessable Entity (we sent an invalid field in the body)
 		422)
-			_github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit "$verb" "$url"
 		;;
 		
 		# Unauthorized (not always)
 		401)
-			_github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit "$verb" "$url"
 		;;
 		
 		# Unauthorized or Rate-Limited
 		403)
-			_github_api_v3_errorMessageExit
+			_github_api_v3_errorMessageExit "$verb" "$url"
 		;;
 		
 	esac
